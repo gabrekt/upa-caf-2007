@@ -1,18 +1,17 @@
+
+suppressPackageStartupMessages({
 library(stringr)
 library(haven)
 library(dplyr)
 library(stringdist)
-
-
-setwd("C:/Users/Lbarayan/Desktop/BBDD 2007")
-DIRECTORIO <- read_sav("DIRECTORIO.sav")
-
+})
 
 #Usamos libreria lib_Reg_Nombres_dir.R
 
 
-source("C:/Users/Lbarayan/Desktop/Análisis CAF 2007/lib_Reg_Nombres_dir.R")
+source("./script/lib_Reg_Nombres_dir.R")
 
+DIRECTORIO <- read_sav("./data/DIRECTORIO.sav")
 
 patron_name <- c("\\(", ")")
 patron_name <- str_c(patron_name, collapse = "|")

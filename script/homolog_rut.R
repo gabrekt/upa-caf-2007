@@ -1,18 +1,17 @@
+
+suppressPackageStartupMessages({
 library(stringr)
 library(haven)
 library(dplyr)
 library(stringdist)
-
-
-setwd("C:/Users/Lbarayan/Desktop/BBDD 2007")
-DIRECTORIO <- read_sav("DIRECTORIO.sav")
-
+})
 
 #Usamos libreria lib_Reg_Nombres_dir.R
 
 
-source("C:/Users/Lbarayan/Desktop/Análisis CAF 2007/lib_Reg_Nombres_dir.R")
+source("./script/lib_Reg_Nombres_dir.R")
 
+DIRECTORIO <- read_sav("./data/DIRECTORIO.sav")
 
 patron_name <- c("\\(", ")")
 patron_name <- str_c(patron_name, collapse = "|")
@@ -40,25 +39,8 @@ PRUEBA <- DIRECTORIO %>%
          NEW_RAZON = Reg_Nombres(NEW_RAZON))
 
 
-#Verificando RUT
-
-
-dgv <- function(T) {
-  M <- 0
-  S <- 1
-  while (T > 0) {
-    S <- (S + (T %% 10) * (9 - M %% 6)) %% 11
-    T <- floor(T / 10)
-    M <- M + 1
-  }
-  
-  if (S == 0) {
-    return(10)
-  } else {
-    return(S - 1)
-  }
-}
-
+#Se importa función verificadora de ruts
+source("./script/verificador_ruts.R")
 
 
 PRUEBA_2 <- PRUEBA %>% 
@@ -79,3 +61,19 @@ nombres <- PRUEBA %>% select(NOMBRE_Ap1) %>% distinct()
 rut <- PRUEBA %>%
   filter(Verif_DV %in% FALSE) %>%
   select(RUT, RUT_DV, NOMBRE_Ap1) %>% distinct()
+
+#Incluimos ID's a los RUTS que están en cero
+
+
+IDs <- PRUEBA$RUT[PRUEBA$RUT == 0]
+IDs_list <- IDs
+  
+for (n in 1:length(IDs)){
+
+  newID <- paste0('ID',sprintf('%05d', n))
+  IDs_list[n] <- newID
+  
+}
+
+PRUEBA$RUT[PRUEBA$RUT == 0] <- IDs_list
+
